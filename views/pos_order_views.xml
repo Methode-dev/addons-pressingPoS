@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="pos_order_view_list_laundry" model="ir.ui.view">
+        <field name="name">pos.order.list.laundry</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="laundry_number_display" optional="show"/>
+                <field name="pickup_datetime" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="pos_order_view_form_laundry" model="ir.ui.view">
+        <field name="name">pos.order.form.laundry</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='session_id']" position="after">
+                <field name="laundry_number_display"/>
+                <field name="pickup_datetime"/>
+                <field name="laundry_tags_printed"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="pos_order_view_search_laundry" model="ir.ui.view">
+        <field name="name">pos.order.search.laundry</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_order_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="laundry_number_display" string="Ticket n°"/>
+            </xpath>
+            <xpath expr="//filter[1]" position="before">
+                <filter name="pickup_today" string="Ready today"
+                        domain="[
+                            ('pickup_datetime', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0))),
+                            ('pickup_datetime', '&lt;', datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(0,0,0)))
+                        ]"/>
+                <filter name="pickup_late" string="Overdue"
+                        domain="[
+                            ('pickup_datetime', '&lt;', datetime.datetime.combine(context_today(), datetime.time(0,0,0))),
+                            ('laundry_number', '!=', False)
+                        ]"/>
+                <separator/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
